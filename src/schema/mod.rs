@@ -4,7 +4,7 @@ use async_graphql::{MergedObject, SchemaBuilder, EmptyMutation, EmptySubscriptio
 
 
 #[derive(MergedObject, Default)]
-pub struct Query(health_check::Health_CheckQuery);
+pub struct Query(health_check::HealthCheckQuery);
 
 /// Build GraphQL Schema
 pub fn build_schema() -> SchemaBuilder<Query, EmptyMutation, EmptySubscription> {
