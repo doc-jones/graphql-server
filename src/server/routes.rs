@@ -12,7 +12,7 @@ async fn health_check() -> Result<impl Reply, Rejection> {
 
 
 pub(super) fn make_routes() -> BoxedFilter<(impl Reply,)> {
-    let health = warp::path::end().and_then(health);
+    let health = warp::path::end().and_then(health_check);
 
     health.boxed()
 }
