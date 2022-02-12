@@ -1,16 +1,16 @@
 use std::convert::Infallible;
 
-use async_graphql::Request;
 use serde_json::json;
 
 use crate::schema;
 
-use async_graphql_warp::{Response as GraphQLResponse};
-use async_graphql::{Request, Schema};
+use warp::{filters::BoxedFilter, Filter, Rejection, Reply, http::Response, reply::json};
 
-use warp::{Filter, Rejection, Reply};
-use warp::filters::BoxedFilter;
-use warp::reply::json;
+use async_graphql::{Request, Schema, http::{playground_source, GraphQLPlaygroundConfig}};
+use async_graphql_warp::{Response as GraphQLResponse};
+
+
+
 
 
 // check that the server is alive
@@ -28,13 +28,23 @@ pub(super) fn make_routes() -> BoxedFilter<(impl Reply,)> {
     let health = warp::path::end().and_then(health_check);
 
     // GraphQL and subscription handler.
-    let graphql_handler = warp::post().and(warp::path(graphql).and(
+    let graphql_handler = warp::post().and(warp::path("graphql").and(
             async_graphql_warp::graphql(schema).and_then(|(schema, request): (Schema<_, _, _>, Request)| async move {
                 Ok::<_, Infallible>(GraphQLResponse::from(schema.execute(request).await))
             }
         )
     ));
 
+    // GraphQL
+    let graphql_playground = warp::path("playground").map(|| {
+        Response::builder()
+            .header("cotent-type", "text/html")
+            .body(playground_source(GraphQLPlaygroundConfig::new("/graphql")))
+    });
 
-    health.boxed()
+    // Combine all routes.
+    health
+        .or(graphql_handler)
+        .or(graphql_playground)
+        .boxed()
 }
