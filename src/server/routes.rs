@@ -1,5 +1,6 @@
 use std::convert::Infallible;
 
+
 use serde_json::json;
 
 use crate::schema;
@@ -7,7 +8,7 @@ use crate::schema;
 use warp::{filters::BoxedFilter, Filter, Rejection, Reply, http::Response, reply::json};
 
 use async_graphql::{Request, Schema, http::{playground_source, GraphQLPlaygroundConfig}};
-use async_graphql_warp::{Response as GraphQLResponse};
+use async_graphql_warp::GraphQLResponse;
 
 
 
