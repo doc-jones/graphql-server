@@ -1,2 +1,2 @@
 # graphql-server
-A learning project combining Rust and GraphQL
+A reference GraphQl sever written in Rust.
